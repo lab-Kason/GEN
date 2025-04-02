@@ -40,6 +40,28 @@ def process_user_data_file(uploaded_user_file):
         st.error(f"Error processing user data file: {e}")
         return None
 
+# Function to calculate percentage
+def calculate_percentage(amount, daily_intake):
+    if daily_intake > 0:
+        return (amount / daily_intake) * 100
+    return 0
+
+# Function to process food content data from a CSV file
+def process_food_file(uploaded_food_file):
+    try:
+        food_data = pd.read_csv(uploaded_food_file)
+        required_columns = ["sodium", "calories", "carbohydrates", "fat", "protein", "sugar"]
+        for column in required_columns:
+            if column not in food_data.columns:
+                raise ValueError(f"Missing required column: {column}")
+        food_data.columns = food_data.columns.str.strip().str.lower()
+        food_data = food_data.apply(pd.to_numeric, errors="coerce")
+        food_data.dropna(inplace=True)
+        return food_data
+    except Exception as e:
+        st.error(f"Error processing food content file: {e}")
+        return None
+
 # Streamlit App
 def main():
     st.title("Daily Suggested Intake Calculator")
@@ -56,6 +78,10 @@ def main():
     st.subheader("Upload User Data CSV")
     uploaded_user_file = st.file_uploader("Upload User Data CSV (name, gender, age, weight, height):", type=["csv"], disabled=False)
 
+    # File uploader for food content CSV
+    st.subheader("Upload Food Content CSV")
+    uploaded_food_file = st.file_uploader("Upload Food Content CSV (sodium, calories, carbohydrates, fat, protein, sugar):", type=["csv"], disabled=False)
+
     # Logic to disable one input method based on the other
     if name or gender or age or weight or height:
         st.warning("Manual input detected. User data CSV upload is disabled.")
@@ -66,6 +92,7 @@ def main():
 
     if st.button("Calculate"):
         try:
+            # Process user data
             if uploaded_user_file is not None:
                 user_data = process_user_data_file(uploaded_user_file)
                 if user_data is not None:
@@ -129,6 +156,44 @@ def main():
                 st.write(f"**Sugar Intake (g):** {sugar_intake}")
             else:
                 st.error("Please provide either manual input or upload a user data CSV file.")
+
+            # Process food content data
+            if uploaded_food_file is not None:
+                food_data = process_food_file(uploaded_food_file)
+                if food_data is not None:
+                    st.subheader("Food Content Data")
+                    st.dataframe(food_data)
+
+                    # Calculate totals
+                    total_sodium = food_data["sodium"].sum()
+                    total_calories = food_data["calories"].sum()
+                    total_carbohydrates = food_data["carbohydrates"].sum()
+                    total_fat = food_data["fat"].sum()
+                    total_protein = food_data["protein"].sum()
+                    total_sugar = food_data["sugar"].sum()
+
+                    # Display totals
+                    st.write(f"**Total Sodium (mg):** {total_sodium}")
+                    st.write(f"**Total Calories (kcal):** {total_calories}")
+                    st.write(f"**Total Carbohydrates (g):** {total_carbohydrates}")
+                    st.write(f"**Total Fat (g):** {total_fat}")
+                    st.write(f"**Total Protein (g):** {total_protein}")
+                    st.write(f"**Total Sugar (g):** {total_sugar}")
+
+                    # Calculate percentages
+                    percentages = {
+                        "Sodium": calculate_percentage(total_sodium, sodium_intake) if sodium_intake > 0 else 0,
+                        "Calories": calculate_percentage(total_calories, bmr) if bmr > 0 else 0,
+                        "Carbohydrates": calculate_percentage(total_carbohydrates, carb_intake) if carb_intake > 0 else 0,
+                        "Fat": calculate_percentage(total_fat, fat_intake) if fat_intake > 0 else 0,
+                        "Protein": calculate_percentage(total_protein, protein_min) if protein_min > 0 else 0,
+                        "Sugar": calculate_percentage(total_sugar, sugar_intake) if sugar_intake > 0 else 0,
+                    }
+
+                    # Display food percentages
+                    st.subheader("Food Percentages")
+                    for nutrient, percentage in percentages.items():
+                        st.write(f"**{nutrient}:** {percentage:.2f}%" if percentage is not None else f"**{nutrient}:** N/A")
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
