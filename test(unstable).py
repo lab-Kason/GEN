@@ -35,6 +35,10 @@ def process_food_file(file):
         food_data["carbohydrates"] = pd.to_numeric(food_data["carbohydrates"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
         food_data["fat"] = pd.to_numeric(food_data["fat"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
         food_data["protein"] = pd.to_numeric(food_data["protein"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
+        food_data["sugar"] = pd.to_numeric(food_data["sugar"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
+
+        # Fill missing values with 0
+        food_data.fillna(0, inplace=True)
 
         return food_data
     except Exception as e:
@@ -96,14 +100,16 @@ def main():
                     total_carbohydrates = food_data["carbohydrates"].sum(skipna=True)
                     total_fat = food_data["fat"].sum(skipna=True)
                     total_protein = food_data["protein"].sum(skipna=True)
+                    total_sugar = food_data["sugar"].sum(skipna=True)
 
                     # Calculate percentages
                     percentages = {
-                        "Sodium": calculate_percentage(total_sodium / 4, sodium_intake),
-                        "Calories": calculate_percentage(total_calories / 4, bmr),
-                        "Carbohydrates": calculate_percentage(total_carbohydrates / 4, carb_intake),
-                        "Fat": calculate_percentage(total_fat / 4, fat_intake),
-                        "Protein": calculate_percentage(total_protein / 4, protein_min),
+                        "Sodium": calculate_percentage(total_sodium / 4, sodium_intake) if sodium_intake > 0 else 0,
+                        "Calories": calculate_percentage(total_calories / 4, bmr) if bmr > 0 else 0,
+                        "Carbohydrates": calculate_percentage(total_carbohydrates / 4, carb_intake) if carb_intake > 0 else 0,
+                        "Fat": calculate_percentage(total_fat / 4, fat_intake) if fat_intake > 0 else 0,
+                        "Protein": calculate_percentage(total_protein / 4, protein_min) if protein_min > 0 else 0,
+                        "Sugar": calculate_percentage(total_sugar / 4, sugar_intake) if sugar_intake > 0 else 0,
                     }
 
                     # Display food percentages
