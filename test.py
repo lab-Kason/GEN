@@ -31,6 +31,9 @@ def process_food_file(uploaded_file):
         # Read the CSV file into a DataFrame
         food_data = pd.read_csv(uploaded_file)
 
+        # Normalize column names
+        food_data.columns = food_data.columns.str.strip().str.lower().str.replace(r"\(.*\)", "", regex=True)
+
         # Ensure required columns exist
         required_columns = ["sodium", "calories", "carbohydrates", "fat", "protein", "sugar"]
         for column in required_columns:
@@ -123,11 +126,11 @@ def main():
 
                     # Calculate percentages
                     percentages = {
-                        "Sodium": calculate_percentage(total_sodium / 4, sodium_intake) if sodium_intake > 0 else 0,
-                        "Calories": calculate_percentage(total_calories / 4, bmr) if bmr > 0 else 0,
-                        "Carbohydrates": calculate_percentage(total_carbohydrates / 4, carb_intake) if carb_intake > 0 else 0,
-                        "Fat": calculate_percentage(total_fat / 4, fat_intake) if fat_intake > 0 else 0,
-                        "Protein": calculate_percentage(total_protein / 4, protein_min) if protein_min > 0 else 0,
+                        "Sodium": calculate_percentage(total_sodium, sodium_intake) if sodium_intake > 0 else 0,
+                        "Calories": calculate_percentage(total_calories, bmr) if bmr > 0 else 0,
+                        "Carbohydrates": calculate_percentage(total_carbohydrates, carb_intake) if carb_intake > 0 else 0,
+                        "Fat": calculate_percentage(total_fat, fat_intake) if fat_intake > 0 else 0,
+                        "Protein": calculate_percentage(total_protein, protein_min) if protein_min > 0 else 0,
                         "Sugar": calculate_percentage(total_sugar, sugar_intake) if sugar_intake > 0 else 0,
                     }
 
