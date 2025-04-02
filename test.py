@@ -30,11 +30,22 @@ def process_food_file(uploaded_file):
     try:
         # Read the CSV file into a DataFrame
         food_data = pd.read_csv(uploaded_file)
+
         # Ensure required columns exist
         required_columns = ["sodium", "calories", "carbohydrates", "fat", "protein", "sugar"]
         for column in required_columns:
             if column not in food_data.columns:
                 raise ValueError(f"Missing required column: {column}")
+
+        # Clean numeric columns by removing non-numeric characters
+        for column in required_columns:
+            food_data[column] = pd.to_numeric(
+                food_data[column].str.replace("[^0-9.]", "", regex=True), errors="coerce"
+            )
+
+        # Fill missing values with 0
+        food_data.fillna(0, inplace=True)
+
         return food_data
     except Exception as e:
         st.error(f"Error processing file: {e}")
@@ -95,12 +106,20 @@ def main():
 
                 if food_data is not None:
                     # Calculate total intake
-                    total_sodium = food_data["sodium"].sum(skipna=True)
-                    total_calories = food_data["calories"].sum(skipna=True)
-                    total_carbohydrates = food_data["carbohydrates"].sum(skipna=True)
-                    total_fat = food_data["fat"].sum(skipna=True)
-                    total_protein = food_data["protein"].sum(skipna=True)
-                    total_sugar = food_data["sugar"].sum(skipna=True)
+                    total_sodium = food_data["sodium"].sum()
+                    total_calories = food_data["calories"].sum()
+                    total_carbohydrates = food_data["carbohydrates"].sum()
+                    total_fat = food_data["fat"].sum()
+                    total_protein = food_data["protein"].sum()
+                    total_sugar = food_data["sugar"].sum()
+
+                    # Display totals for debugging
+                    st.write(f"Total Sodium: {total_sodium} mg")
+                    st.write(f"Total Calories: {total_calories} kcal")
+                    st.write(f"Total Carbohydrates: {total_carbohydrates} g")
+                    st.write(f"Total Fat: {total_fat} g")
+                    st.write(f"Total Protein: {total_protein} g")
+                    st.write(f"Total Sugar: {total_sugar} g")
 
                     # Calculate percentages
                     percentages = {
@@ -120,6 +139,7 @@ def main():
                     # Display the processed food data
                     st.subheader("Processed Food Data")
                     st.dataframe(food_data)
+                    st.write("Cleaned Food Data:", food_data.head())
                 else:
                     st.error("Failed to process the uploaded file.")
             else:
