@@ -24,16 +24,17 @@ def calculate_bmi(weight, height):
 def process_user_data_file(uploaded_user_file):
     try:
         user_data = pd.read_csv(uploaded_user_file)
-        required_columns = ["gender", "age", "weight", "height"]
+        required_columns = ["name", "gender", "age", "weight", "height"]
         for column in required_columns:
             if column not in user_data.columns:
                 raise ValueError(f"Missing required column: {column}")
         user_data.columns = user_data.columns.str.strip().str.lower()
+        user_data["name"] = user_data["name"].str.strip()
         user_data["gender"] = user_data["gender"].str.lower().str.strip()
         user_data["age"] = pd.to_numeric(user_data["age"], errors="coerce")
         user_data["weight"] = pd.to_numeric(user_data["weight"], errors="coerce")
         user_data["height"] = pd.to_numeric(user_data["height"], errors="coerce")
-        user_data.dropna(subset=["gender", "age", "weight", "height"], inplace=True)
+        user_data.dropna(subset=["name", "gender", "age", "weight", "height"], inplace=True)
         return user_data
     except Exception as e:
         st.error(f"Error processing user data file: {e}")
@@ -45,18 +46,23 @@ def main():
 
     # User inputs
     st.subheader("Manual Input")
-    gender = st.text_input("Enter your gender (male/female):", value="male")
-    age = st.number_input("Enter your age (in years):", min_value=1, value=25)
-    weight = st.number_input("Enter your weight (in kg):", min_value=1.0, value=70.0)
-    height = st.number_input("Enter your height (in cm):", min_value=1.0, value=170.0)
+    name = st.text_input("Enter your name:", value="", disabled=False)
+    gender = st.text_input("Enter your gender (male/female):", value="", disabled=False)
+    age = st.number_input("Enter your age (in years):", min_value=1, value=None, step=1, disabled=False)
+    weight = st.number_input("Enter your weight (in kg):", min_value=1.0, value=None, step=0.1, disabled=False)
+    height = st.number_input("Enter your height (in cm):", min_value=1.0, value=None, step=0.1, disabled=False)
 
     # File uploader for user data CSV
     st.subheader("Upload User Data CSV")
-    uploaded_user_file = st.file_uploader("Upload User Data CSV (gender, age, weight, height):", type=["csv"])
+    uploaded_user_file = st.file_uploader("Upload User Data CSV (name, gender, age, weight, height):", type=["csv"], disabled=False)
 
-    # File uploader for food content CSV
-    st.subheader("Upload Food Content CSV")
-    uploaded_food_file = st.file_uploader("Upload Food Content CSV:", type=["csv"])
+    # Logic to disable one input method based on the other
+    if name or gender or age or weight or height:
+        st.warning("Manual input detected. User data CSV upload is disabled.")
+        uploaded_user_file = None  # Disable CSV upload
+    elif uploaded_user_file is not None:
+        st.warning("User data CSV uploaded. Manual input is disabled.")
+        name = gender = age = weight = height = None  # Disable manual input
 
     if st.button("Calculate"):
         try:
@@ -77,6 +83,7 @@ def main():
                             carb_intake = max(remaining_energy / 4, 0)
                             sugar_intake = suggest_daily_sugar()
                             results.append({
+                                "Name": row["name"],
                                 "Gender": row["gender"],
                                 "Age": row["age"],
                                 "Weight (kg)": row["weight"],
@@ -102,7 +109,7 @@ def main():
                     )
                 else:
                     st.error("Failed to process the uploaded user data file.")
-            else:
+            elif name and gender and age and weight and height:
                 bmr = calculate_bmr(gender, age, weight, height)
                 bmi = calculate_bmi(weight, height)
                 sodium_intake = 1500 if 19 <= age <= 50 else 2300
@@ -112,7 +119,7 @@ def main():
                 remaining_energy = bmr - (fat_intake * 9) - (protein_min * 4)
                 carb_intake = max(remaining_energy / 4, 0)
                 sugar_intake = suggest_daily_sugar()
-                st.subheader("Your Results")
+                st.subheader(f"{name}'s Results")
                 st.write(f"**BMR (Calories):** {bmr:.2f}")
                 st.write(f"**BMI:** {bmi:.2f}")
                 st.write(f"**Sodium Intake (mg):** {sodium_intake}")
@@ -120,6 +127,8 @@ def main():
                 st.write(f"**Protein Intake (g):** {protein_min:.2f} - {protein_max:.2f}")
                 st.write(f"**Carbohydrate Intake (g):** {carb_intake:.2f}")
                 st.write(f"**Sugar Intake (g):** {sugar_intake}")
+            else:
+                st.error("Please provide either manual input or upload a user data CSV file.")
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
