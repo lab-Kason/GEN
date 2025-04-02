@@ -24,29 +24,20 @@ def calculate_bmi(weight, height):
 def calculate_percentage(amount, daily_intake):
     return (amount / daily_intake) * 100
 
-# Function to process the food content CSV
-def process_food_file(file):
+
+# Function to process the uploaded food file
+def process_food_file(uploaded_file):
     try:
-        # Read the CSV file
-        food_data = pd.read_csv(file)
-
-        # Clean numeric columns by removing non-numeric characters
-        food_data["sodium"] = pd.to_numeric(food_data["sodium"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-        food_data["calories"] = pd.to_numeric(food_data["calories"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-        food_data["carbohydrates"] = pd.to_numeric(food_data["carbohydrates"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-        food_data["fat"] = pd.to_numeric(food_data["fat"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-        food_data["protein"] = pd.to_numeric(food_data["protein"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-        food_data["sugar"] = pd.to_numeric(food_data["sugar"].str.replace("[^0-9.]", "", regex=True), errors="coerce")
-
-        # Fill missing values with 0
-        food_data.fillna(0, inplace=True)
-
-        # Debugging: Display cleaned data
-        st.write("Cleaned Food Data:", food_data.head())
-
+        # Read the CSV file into a DataFrame
+        food_data = pd.read_csv(uploaded_file)
+        # Ensure required columns exist
+        required_columns = ["sodium", "calories", "carbohydrates", "fat", "protein", "sugar"]
+        for column in required_columns:
+            if column not in food_data.columns:
+                raise ValueError(f"Missing required column: {column}")
         return food_data
     except Exception as e:
-        st.error(f"An error occurred while processing the file. Please ensure it is a valid CSV file with the correct format. Error: {e}")
+        st.error(f"Error processing file: {e}")
         return None
 
 # Streamlit App
