@@ -119,7 +119,7 @@ def main():
                     st.write(f"Total Carbohydrates: {total_carbohydrates/4} g")
                     st.write(f"Total Fat: {total_fat/4} g")
                     st.write(f"Total Protein: {total_protein/4} g")
-                    st.write(f"Total Sugar: {total_suga/4} g")
+                    st.write(f"Total Sugar: {total_sugar/4} g")
 
                     # Calculate percentages
                     percentages = {
