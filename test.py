@@ -114,12 +114,12 @@ def main():
                     total_sugar = food_data["sugar"].sum()
 
                     # Display totals for debugging
-                    st.write(f"Total Sodium: {total_sodium} mg")
-                    st.write(f"Total Calories: {total_calories} kcal")
-                    st.write(f"Total Carbohydrates: {total_carbohydrates} g")
-                    st.write(f"Total Fat: {total_fat} g")
-                    st.write(f"Total Protein: {total_protein} g")
-                    st.write(f"Total Sugar: {total_sugar} g")
+                    st.write(f"Total Sodium: {total_sodium/4} mg")
+                    st.write(f"Total Calories: {total_calories/4} kcal")
+                    st.write(f"Total Carbohydrates: {total_carbohydrates/4} g")
+                    st.write(f"Total Fat: {total_fat/4} g")
+                    st.write(f"Total Protein: {total_protein/4} g")
+                    st.write(f"Total Sugar: {total_suga/4} g")
 
                     # Calculate percentages
                     percentages = {
