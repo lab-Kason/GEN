@@ -11,15 +11,14 @@ def calculate_bmr(gender, age, weight, height):
     else:
         raise ValueError("Invalid gender. Please enter 'male' or 'female'.")
     return bmr
+# Function to suggest daily sugar intake
+def suggest_daily_sugar():
+    return 25  # Recommended daily sugar intake in grams
 
 # Function to calculate BMI
 def calculate_bmi(weight, height):
     height_m = height / 100
     bmi = weight / (height_m ** 2)
-    return bmi
-    # Function to suggest daily sugar intake
-    def suggest_daily_sugar():
-        return 25  # Recommended daily sugar intake in grams
 # Function to calculate percentage
 def calculate_percentage(amount, daily_intake):
     return (amount / daily_intake) * 100
@@ -76,7 +75,7 @@ def main():
             protein_min = weight * 0.8
             protein_max = weight * 1.2
             carb_intake = (bmr - (fat_intake * 9) - (protein_min * 4)) / 4
-
+            sugar_intake = suggest_daily_sugar()
             # Display results
             st.subheader("Your Results")
             st.write(f"**BMR (Calories):** {bmr:.2f}")
@@ -85,7 +84,7 @@ def main():
             st.write(f"**Fat Intake (g):** {fat_intake:.2f}")
             st.write(f"**Protein Intake (g):** {protein_min:.2f} - {protein_max:.2f}")
             st.write(f"**Carbohydrate Intake (g):** {carb_intake:.2f}")
-            st.write(f"**Sugar Intake (mg):** {suggest_daily_sugar()}")
+            st.write(f"**Sugar Intake (mg):** {sugar_intake}")
             # Process the uploaded file
             if uploaded_file is not None:
                 food_data = process_food_file(uploaded_file)
