@@ -1,14 +1,16 @@
-Content,Weight,sodium,calories,carbohydrates,fat,protein
-Chicken Cutlet,500g,0,550 kcal,0,12.5g,110g
-Low Sodium Soy Sauce,15ml,600mg,10 kcal,0g,0g,1g
-Kombu,10g,70mg,25 kcal,6g,0.1g,1g
-Cucumber,250g,0,38 kcal,9g,0.3g,1.3g
-Sugar,4g,0,16 kcal,4g,0g,0g
-Rice,200g,0,260 kcal,58g,0.5g,5g
-Tofu,300g,0,150 kcal,3g,9g,15g
-Garlic & Ginger,15g,0,7 kcal,1.4g,0.1g,0.2g
-Cream,100ml,0.036g,75 kcal,6.5g,4g,3.2g
-Eggs,50g,0,70 kcal,0.5g,5g,6g
-Tomatoes,60g,0,11 kcal,2.5g,0.1g,0.55g
-Lettuce,100g,28mg,17 kcal,3.3g,0.3g,1.2g
-Pepper Paste,25g,630mg,52.5 kcal,11g,0.3g,1g                                                                                                                                                               
+Content,Weight,sodium,calories,carbohydrates,fat,protein,sugar,dietary_fiber
+Chicken Cutlet,500g,0,550 kcal,0,12.5g,110g,0g,0g
+Low Sodium Soy Sauce,4ml,150mg,10 kcal,0g,0g,1g,0g,0g
+Kombu,10g,70mg,25 kcal,6g,0.1g,1g,0g,0g
+Cucumber,250g,0,38 kcal,9g,0.3g,1.3g,0g,0g
+Sugar,4g,0,16 kcal,4g,0g,0g,0g,0g
+Rice,200g,0,260 kcal,58g,0.5g,5g,0g,0g
+Tofu,300g,0,150 kcal,3g,9g,15g,0g,0g
+Garlic & Ginger,15g,0,7 kcal,1.4g,0.1g,0.2g,0g,0g
+Cream,100ml,0.036g,75 kcal,6.5g,4g,3.2g,0g,0g
+Eggs,50g,0,70 kcal,0.5g,5g,6g,0g,0g
+Tomatoes,60g,0,11 kcal,2.5g,0.1g,0.55g,0g,0g
+Lettuce,25g,7mg,17 kcal,3.3g,0.3g,1.2g,0g,0g
+Korean hot Sauce,25g,630mg,52.5 kcal,11g,0.3g,1g,5g,0g
+Canola Oil,2.5ml,0,22.5 kcal,0g,2.5g,0g,0g,0g
+
