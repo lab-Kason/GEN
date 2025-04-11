@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # URL to the raw CSV file on GitHub
-CSV_URL = "https://raw.githubusercontent.com/lab-Kason/GEN/main/food_content.csv"
+CSV_URL = "https://github.com/lab-Kason/GEN/blob/main/food_content.csv"
 
 # Set the page layout to wide for better use of screen space
 st.set_page_config(page_title="CSV Viewer", layout="wide")
